@@ -10,7 +10,6 @@ return {
 		function player:load()
 			self.body	 = love.physics.newBody(world, x, y, "dynamic")
 			self.shape   = love.physics.newRectangleShape(sprite_size, sprite_size)
-			--self.shape   = love.physics.newCircleShape(sprite_size/2)
 			self.fixture = love.physics.newFixture(player.body, player.shape)
 
 			self.body:setMass(5)
@@ -18,7 +17,6 @@ return {
 
 			self.fixture:setUserData("player")
 			self.fixture:setFriction(1)
-			--player.fixture:setRestitution(0.5)
 
 			self.jumpcounter = 0
 			self.can_jump	 = false
@@ -34,9 +32,23 @@ return {
 		function player:update(dt, input)
 			self.dx, self.dy = self.body:getLinearVelocity()
 			if input:down("right") then
-				self.body:setLinearVelocity( 65, self.dy)
+				if self.is_flying then
+					self.body:applyForce( 2000, 0)
+					if self.dx > -self.jetcap then
+						self.body:setLinearVelocity(-self.jetcap, self.dy)
+					end
+				else
+					self.body:setLinearVelocity( 65, self.dy)
+				end
 			elseif input:down("left") then
-				self.body:setLinearVelocity(-65, self.dy)
+				if self.is_flying then
+					self.body:applyForce(-2000, 0)
+					if self.dx < self.jetcap then
+						self.body:setLinearVelocity( self.jetcap, self.dy)
+					end
+				else
+					self.body:setLinearVelocity(-65, self.dy)
+				end
 			end
 
 			if input:pressed("up") then
@@ -52,24 +64,25 @@ return {
 				end
 			end
 
-			if input:pressed("toggle jetpack") then
-				self.has_jetpack = not self.has_jetpack
-			end
-
 			if input:down("fly") and self.has_jetpack then
 				self.can_jump  = false
 				self.is_flying = true
+
+				self.fixture:setRestitution(0.3)
 
 				if self.dy > self.jetcap then
 					self.body:applyForce(0, -5000)
 				end
 			else
 				self.is_flying = false
+				self.fixture:setRestitution(0)
+			end
+
+			if input:pressed("toggle jetpack") then
+				self.has_jetpack = not self.has_jetpack
 			end
 
 			self.jetpack:update(dt, player.body:getX() - 2, player.body:getY() + 3, self.is_flying)
-
-			--self.body:setFixedRotation(true)
 		end
 
 		function player:draw_debug(tx, ty, scale)
@@ -77,7 +90,6 @@ return {
 			love.graphics.scale(scale)
 			love.graphics.translate(tx, ty)
 			love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
-			--love.graphics.circle("line", self.body:getX(), self.body:getY(), self.shape:getRadius())
 			love.graphics.pop()
 		end
 
