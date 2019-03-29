@@ -21,7 +21,7 @@ return {
 			self.jumpcounter = 0
 			self.can_jump	 = false
 
-			self.jetpack	 = Jetpack.new(self.body:getX(), self.body:getY())
+			self.jetpack	 = Jetpack.new(world, self.body:getX(), self.body:getY())
 			self.jetcap      = -250
 			self.has_jetpack = false
 			self.is_flying   = false
@@ -82,7 +82,7 @@ return {
 				self.has_jetpack = not self.has_jetpack
 			end
 
-			self.jetpack:update(dt, player.body:getX() - 2, player.body:getY() + 3, self.is_flying)
+			self.jetpack:update(dt, player.body:getX() - 2, player.body:getY() + 3, self.is_flying, self.dx)
 		end
 
 		function player:draw_debug(tx, ty, scale)
