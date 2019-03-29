@@ -164,7 +164,7 @@ function love.draw()
 	love.graphics.print("Is flying: " .. tostring(player.is_flying), 10, 50)
 
 	if player.is_flying then
-		love.graphics.print("PSYSTEM ON!", 10, 70)
+		love.graphics.print("PARTICLE SYSTEM ON!", 10, 70)
 	end
 
 	if debug then
@@ -178,10 +178,6 @@ function love.draw()
 		end
 		for _, trapdoor in ipairs(entities.trapdoors) do
 			trapdoor:draw_debug(-player.body:getX() + WIDTH/2/scale, -player.body:getY() + HEIGHT/2/scale, scale)
-		end
-
-		if player.is_flying then
-			love.graphics.print("PSYSTEM ON!", 10, 70)
 		end
 	end
 end
