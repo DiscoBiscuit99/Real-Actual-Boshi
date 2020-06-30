@@ -6,12 +6,14 @@ local Bridge   = require("bridge")
 local Trapdoor = require("trapdoor")
 
 -- Constants
-WIDTH  = love.graphics.getWidth()
-HEIGHT = love.graphics.getHeight()
+graphics = love.graphics
+
+WIDTH  = graphics.getWidth()
+HEIGHT = graphics.getHeight()
 
 -- Locals
-local debug = false
-local player_drop  = false
+local debug_mode = false
+local player_drop = false
 
 local meter = 8
 local multiplier = 10
@@ -40,6 +42,7 @@ function load_keybindings()
 	input:bind('d', "right")
 	input:bind('a', "left")
 	input:bind('k', "fly")
+	input:bind('t', "jet type")
 
 	-- Debug
 	input:bind('space', "toggle shader")
@@ -54,7 +57,7 @@ function update_keybindings(dt)
 	end
 
 	if input:pressed("debug") then
-		debug = not debug
+		debug_mode = not debug_mode
 	end
 	if input:pressed("down") then
 		player_drop = true
@@ -162,16 +165,17 @@ function love.draw()
 
 	love.graphics.print("Jetpack: " .. tostring(player.has_jetpack), 10, 30)
 	love.graphics.print("Is flying: " .. tostring(player.is_flying), 10, 50)
+	love.graphics.print("Jet type: " .. player.jetpack.type.name, 10, 70)
 
 	if player.is_flying then
-		love.graphics.print("PARTICLE SYSTEM ON!", 10, 70)
+		love.graphics.print("PARTICLE SYSTEM ON!", 10, 90)
 	end
 
-	if debug then
+	if debug_mode then
 		map:box2d_draw(-player.body:getX() + WIDTH/2/scale, -player.body:getY() + HEIGHT/2/scale, scale, scale)
 		player:draw_debug(-player.body:getX() + WIDTH/2/scale, -player.body:getY() + HEIGHT/2/scale, scale)
 
-		love.graphics.print("Is flying: " .. tostring(player.is_flying), 10, 50)
+		--love.graphics.print("Is flying: " .. tostring(player.is_flying), 10, 50)
 
 		for _, bridge in ipairs(entities.bridges) do
 			bridge:draw_debug(-player.body:getX() + WIDTH/2/scale, -player.body:getY() + HEIGHT/2/scale, scale)
@@ -182,11 +186,11 @@ function love.draw()
 	end
 end
 
-function begin_contact(a, b, contact)
-end
+--function begin_contact(a, b, contact)
+--end
 
-function end_contact(a, b, contact)
-end
+--function end_contact(a, b, contact)
+--end
 
 function presolve(a, b, contact)
 	local vel_x, vel_y = player.body:getLinearVelocity()

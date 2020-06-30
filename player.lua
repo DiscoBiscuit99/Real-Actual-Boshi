@@ -86,6 +86,10 @@ return {
 				self.has_jetpack = not self.has_jetpack
 			end
 
+			if input:pressed("jet type") then
+				self.jetpack:cycle_types()
+			end
+
 			self.jetpack:update(dt, player.body:getX() - 2, player.body:getY() + 3, self.is_flying, self.dx)
 		end
 
